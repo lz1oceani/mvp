@@ -1,0 +1,1 @@
+LD_LIBRARY_PATH=THE_LIC_PATH_OF_ISAAC_ENVS python scripts/test_speed.py task=IsaacGymPickCube

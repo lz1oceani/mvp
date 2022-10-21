@@ -1,15 +1,16 @@
-#!/usr/bin/env python3
-
-"""Train a policy with PPO."""
+import os, os.path as osp
+from isaacgym import gymapi
+from isaacgym import gymutil
 
 import hydra
 import omegaconf
-import os
+import torch
+import time
 
 from mvp.utils.hydra_utils import omegaconf_to_dict, print_dict, dump_cfg
 from mvp.utils.hydra_utils import set_np_formatting, set_seed
 from mvp.utils.hydra_utils import parse_sim_params, parse_task
-from mvp.utils.hydra_utils import process_ppo
+import matplotlib.pyplot as plt
 
 
 @hydra.main(config_name="config", config_path="../configs")
@@ -34,11 +35,29 @@ def train(cfg: omegaconf.DictConfig):
     # Construct task
     sim_params = parse_sim_params(cfg, cfg_dict)
     env = parse_task(cfg, cfg_dict, sim_params)
-
-    # Perform training
-    ppo = process_ppo(env, cfg, cfg_dict, cfg.logdir, cfg.cptdir)
-    ppo.run(num_learning_iterations=cfg.train.learn.max_iterations, log_interval=cfg.train.learn.save_interval)
-
-
+    
+    obs = env.reset()
+    print(obs.shape)
+    num_envs = len(obs)
+    for i in range(2):
+        env.step(torch.rand((num_envs,) + env.action_space.shape, device="cuda:0"))
+    torch.cuda.synchronize()
+    
+    st = time.time()
+    num_envs = len(obs)
+    num = 10
+    for i in range(num):
+        env.step(torch.rand((num_envs,) + env.action_space.shape, device="cuda:0"))
+    torch.cuda.synchronize()
+    total_time = time.time() - st
+    print("FPS", num * num_envs / total_time, 'time', total_time)
+    
+        
+    
 if __name__ == '__main__':
+    conda_path = osp.abspath("~/miniconda3/envs/rlgpu/lib")
+    print(conda_path)
+    
+    os.environ["LD_LIBRARY_PATH"] = conda_path
+    
     train()

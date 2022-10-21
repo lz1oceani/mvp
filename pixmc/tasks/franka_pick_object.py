@@ -41,7 +41,7 @@ class FrankaPickObject(BaseTask):
         self.up_axis_idx = 2
 
         self.distX_offset = 0.04
-        self.dt = 1 / 60.
+        self.dt = self.cfg["sim"].get("dt", 1.0 / 60)
 
         self.obj_asset_files = {
             "can": "urdf/ycb/010_potted_meat_can/010_potted_meat_can.urdf",

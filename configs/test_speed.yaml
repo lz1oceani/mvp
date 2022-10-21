@@ -1,0 +1,107 @@
+cptdir: ''
+graphics_device_id: 0
+headless: true
+logdir: /tmp/debug
+num_gpus: 1
+physics_engine: physx
+pipeline: gpu
+resume: 0
+rl_device: cuda:0
+sim_device: cuda:0
+task:
+  env:
+    actionPenaltyScale: 0.01
+    actionScale: 7.5
+    asset:
+      assetFileNameFranka: urdf/franka_description/robots/franka_panda.urdf
+      assetRoot: assets
+    cam:
+      crop: center
+      fov: 120
+      h: 128
+      loc_p:
+      - 0.04
+      - 0.0
+      - 0.045
+      loc_r:
+      - 180
+      - -90.0
+      - 0.0
+      ss: 2
+      w: 256
+    controlFrequencyInv: 25
+    dofVelocityScale: 0.1
+    envSpacing: 1.5
+    episodeLength: 200
+    goalBonusRewardScale: 4.0
+    goalDistRewardScale: 1.28
+    goal_height: 0.8
+    im_size: 128
+    liftBonusRewardScale: 4.0
+    numEnvs: 256
+    obj_type: box
+    objectDistRewardScale: 0.08
+    object_pos_delta:
+    - 0.1
+    - 0.2
+    object_pos_init:
+    - 0.5
+    - 0.0
+    obs_type: pixels
+  name: FrankaPickObject
+  sim:
+    dt: 0.002
+    physx:
+      always_use_articulations: false
+      bounce_threshold_velocity: 0.2
+      contact_offset: 0.02
+      default_buffer_size_multiplier: 5.0
+      max_depenetration_velocity: 1000.0
+      num_position_iterations: 25
+      num_threads: 4
+      num_velocity_iterations: 0
+      rest_offset: 0.0
+      solver_type: 1
+    substeps: 1
+  task:
+    randomize: false
+test: false
+train:
+  clip_actions: 1.0
+  clip_observations: 5.0
+  encoder:
+    emb_dim: 128
+    freeze: true
+    model_type: maevit-s16
+    pretrain_dir: /tmp/pretrained
+    pretrain_type: hoi
+  learn:
+    agent_name: franka_ppo
+    cliprange: 0.1
+    ent_coef: 0
+    gamma: 0.99
+    init_noise_std: 1.0
+    lam: 0.95
+    log_interval: 1
+    max_grad_norm: 1
+    max_iterations: 2000
+    nminibatches: 4
+    noptepochs: 10
+    nsteps: 32
+    optim_stepsize: 0.001
+    print_log: true
+    resume: 0
+    save_interval: 50
+    schedule: cos
+    test: false
+  policy:
+    pi_hid_sizes:
+    - 256
+    - 128
+    - 64
+    vf_hid_sizes:
+    - 256
+    - 128
+    - 64
+  seed: 0
+  torch_deterministic: false
